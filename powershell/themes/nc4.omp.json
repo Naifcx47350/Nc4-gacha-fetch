@@ -1,0 +1,205 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "upgrade": {
+    "source": "cdn",
+    "interval": "168h",
+    "auto": false,
+    "notice": false
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "\u250f[<#ffffff>\ueb99</> {{ .UserName }} from <#ffffff>\uf108</> {{ .HostName }}]",
+          "foreground": "#f8405b",
+          "type": "session",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none",
+            "style": "dallas",
+            "threshold": 0
+          },
+          "template": "[<#ffffff>\uf252</> {{ .FormattedMs }}s]",
+          "foreground": "#ffffff",
+          "type": "executiontime",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "cache_duration": "none",
+            "root_icon": "\uf292"
+          },
+          "template": "\uf0e7",
+          "type": "root",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "cache_duration": "30s"
+          },
+          "template": "[<#ffffff>\ue266</> RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB]",
+          "foreground": "#ffffff",
+          "type": "sysinfo",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "cache_duration": "none",
+            "time_format": "Monday at 3:04:05 PM"
+          },
+          "template": "[<#ffffff>\uf073</> {{ .CurrentDate | date .Format }}]",
+          "foreground": "#f8405b",
+          "type": "time",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "cache_duration": "none",
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "template": "[{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <#ffffff>\uf044</> {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#ffffff>\uf046</> {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} <#ffffff>\ueb4b</> {{ .StashCount }}{{ end }}]",
+          "foreground": "#b6b6bc",
+          "type": "git",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "[{{ .Profile }}{{if .Region}}@{{ .Region }}{{ end }}]",
+          "foreground": "#8a8a8d",
+          "type": "aws",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "[{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}]",
+          "foreground": "#8a8a8d",
+          "type": "kubectl",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "[\uf0e7]",
+          "foreground": "#8a8a8d",
+          "type": "root",
+          "style": "plain"
+        },
+        {
+          "type": "status",
+          "style": "plain",
+          "properties": { "cache_duration": "none" },
+          "foreground": "#ff4d4f",
+          "template": "[ error]"
+        }
+      ]
+    },
+
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "python",
+          "style": "plain",
+          "properties": { "cache_duration": "24h" },
+          "foreground": "#277e1e",
+          "template": "[ {{ .Full }}{{ if .Venv }} ({{ .Venv }}){{ end }}]"
+        },
+        {
+          "type": "node",
+          "style": "plain",
+          "properties": { "cache_duration": "24h" },
+          "foreground": "#b5cea8",
+          "template": "[󰎙 {{ .Full }}]"
+        },
+        {
+          "type": "go",
+          "style": "plain",
+          "properties": { "cache_duration": "24h" },
+          "foreground": "#4fc1ff",
+          "template": "[Go {{ .Full }}]"
+        },
+        {
+          "type": "java",
+          "style": "plain",
+          "properties": { "cache_duration": "24h" },
+          "foreground": "#f0ad6d",
+          "template": "[Java {{ .Full }}]"
+        },
+        {
+          "type": "dotnet",
+          "style": "plain",
+          "properties": { "cache_duration": "24h" },
+          "foreground": "#4f334c",
+          "template": "[.NET {{ .Full }}]"
+        },
+        {
+          "type": "rust",
+          "style": "plain",
+          "properties": { "cache_duration": "24h" },
+          "foreground": "#d19a66",
+          "template": "[Rust {{ .Full }}]"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "properties": {
+            "cache_duration": "none",
+            "style": "full"
+          },
+          "template": "\u2516[<#ffffff>{{ if .Env.CONDA_DEFAULT_ENV }}\ud83d\udfe2 {{.Env.CONDA_DEFAULT_ENV}}{{ else }}🌐Main{{ end }}</>]",
+          "foreground": "#f8405b",
+          "type": "path",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "[{{ .PWD }}]",
+          "foreground": "#ffffff",
+          "type": "path",
+          "style": "plain"
+        }
+      ],
+      "newline": true
+    },
+
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "\u2514\u2500Δ",
+          "foreground": "#f8405b",
+          "type": "text",
+          "style": "plain"
+        }
+      ],
+      "newline": true
+    }
+  ],
+  "version": 3,
+  "final_space": true
+}
