@@ -1,0 +1,18 @@
+# Normalize line endings on checkin; check out platform-appropriate endings.
+* text=auto
+
+# Windows shell scripts want CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# Cross-platform / unix tooling wants LF
+*.py  text eol=lf
+*.sh  text eol=lf
+
+# ASCII art & config: keep LF so the gradient taggers stay consistent
+*.txt   text eol=lf
+*.json  text eol=lf
+*.jsonc text eol=lf
+
+# Binary
+*.png binary

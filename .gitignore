@@ -1,0 +1,19 @@
+# Generated fastfetch state
+fastfetch/config.jsonc
+fastfetch/Ascii/ascii_current.txt
+gacha-state.json
+fastfetch/gacha-state.json
+
+# Working notes (not for clone users)
+DEVMAP.md
+
+# Installer backups
+*.bak-*
+
+# Python
+__pycache__/
+*.pyc
+
+# OS cruft
+Thumbs.db
+.DS_Store
