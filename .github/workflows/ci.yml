@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Lint and smoke test
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -AllowClobber
+
+      - name: Lint PowerShell
+        shell: pwsh
+        run: |
+          $found = Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+          if ($found) {
+              $found | Format-Table Severity, RuleName, ScriptName, Line, Message -AutoSize | Out-String -Width 200
+              throw "$($found.Count) PSScriptAnalyzer finding(s)."
+          }
+          'PowerShell clean.'
+
+      - name: Validate JSON and templates
+        shell: pwsh
+        run: |
+          $bad = 0
+          foreach ($f in Get-ChildItem -Recurse -Include *.json, *.jsonc -File) {
+              $text = Get-Content $f.FullName -Raw
+              # jsonc: strip whole-line // comments before parsing
+              $text = [regex]::Replace($text, '(?m)^\s*//.*$', '')
+              try { $null = $text | ConvertFrom-Json }
+              catch { Write-Host "INVALID: $($f.FullName) - $($_.Exception.Message)"; $bad++ }
+          }
+          if ($bad) { throw "$bad invalid JSON file(s)." }
+          'JSON clean.'
+
+      - name: Every art file is tagged and non-empty
+        shell: pwsh
+        run: |
+          $art = @(Get-ChildItem fastfetch/Ascii -Recurse -Filter *.txt -File |
+              Where-Object { $_.Name -ne 'ascii_current.txt' })
+          $bad = @()
+          foreach ($f in $art) {
+              $lines = @(Get-Content $f.FullName)
+              if (-not $lines) { $bad += "$($f.Name): empty"; continue }
+              if (-not ($lines -match '^\$[1-9]')) { $bad += "$($f.Name): no `$1-`$9 colour tags" }
+          }
+          if ($bad) { $bad | ForEach-Object { Write-Host $_ }; throw "$($bad.Count) art file(s) need attention." }
+          "$($art.Count) art files OK."
+
+      - name: Engine smoke test
+        shell: pwsh
+        env:
+          NC4_FETCH_ROOT: ${{ github.workspace }}\fastfetch
+          NC4_FETCH_NOSTATE: '1'
+        run: |
+          ./fastfetch/scripts/randfetch.ps1 -List | Out-Null
+          ./fastfetch/scripts/randfetch.ps1 -Stats | Out-Null
+          foreach ($i in 1..25) { ./fastfetch/scripts/randfetch.ps1 -DryRun }
+          ./fastfetch/scripts/randfetch.ps1 -DryRun -Shiny
+          ./fastfetch/scripts/randfetch.ps1 -DryRun -Demo
+          'Engine OK.'
+
+      - name: Generated config is valid for every palette
+        shell: pwsh
+        env:
+          NC4_FETCH_ROOT: ${{ github.workspace }}\fastfetch
+          NC4_FETCH_NOSTATE: '1'
+        run: |
+          $src = Get-Content ./fastfetch/scripts/randfetch.ps1 -Raw
+          $names = [regex]::Matches($src, "Name\s*=\s*'([^']+)'") | ForEach-Object { $_.Groups[1].Value }
+          foreach ($n in $names) {
+              ./fastfetch/scripts/randfetch.ps1 -NoRun -Palette $n | Out-Null
+              $cfg = Get-Content ./fastfetch/config.jsonc -Raw
+              $cfg = [regex]::Replace($cfg, '(?m)^\s*//.*$', '')
+              try { $null = $cfg | ConvertFrom-Json }
+              catch { throw "Palette '$n' produced invalid config: $($_.Exception.Message)" }
+          }
+          "$($names.Count) palettes render valid config."
+
+      - name: Installer dry run
+        shell: pwsh
+        run: |
+          foreach ($part in 1, 2, 3) { ./install.ps1 $part -WhatIf | Out-Null }
+          ./install.ps1 1 -Link -WhatIf | Out-Null
+          'Installer dry runs OK.'

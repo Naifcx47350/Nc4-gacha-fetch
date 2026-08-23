@@ -1,3 +1,4 @@
+#Requires -Version 7
 <#
 .SYNOPSIS
     nc4-gacha-fetch :: the gacha fetch engine.
@@ -13,6 +14,10 @@
 
     Root is $env:NC4_FETCH_ROOT, else the fastfetch folder next to this
     script, else ~/.config/fastfetch.
+
+    Pity and roll history live in gacha-state.json inside that root, unless
+    $env:NC4_FETCH_STATE names a file elsewhere. A linked install points it
+    outside the repo so `git clean` cannot wipe your pity.
 
 .PARAMETER Palette
     Force a specific palette by name (skips the palette roll).
@@ -69,7 +74,7 @@ $rootDir = if ($env:NC4_FETCH_ROOT) {
 $asciiDir     = Join-Path $rootDir 'Ascii'
 $currentArt   = Join-Path $asciiDir 'ascii_current.txt'
 $livePath     = Join-Path $rootDir 'config.jsonc'
-$statePath    = Join-Path $rootDir 'gacha-state.json'
+$statePath    = if ($env:NC4_FETCH_STATE) { $env:NC4_FETCH_STATE } else { Join-Path $rootDir 'gacha-state.json' }
 $templateName = if ($Demo) { 'config.demo.template.jsonc' } else { 'config.template.jsonc' }
 $templatePath = Join-Path $rootDir $templateName
 if ($Demo -and -not (Test-Path $templatePath)) {
@@ -107,7 +112,7 @@ function New-Gradient([string[]]$anchors) {
         $p       = $i / 8.0
         $seg     = [math]::Min([math]::Floor($p * ($n - 1)), $n - 2)
         $localT  = ($p * ($n - 1)) - $seg
-        $out    += Get-BlendedHex $anchors[$seg] $anchors[$seg + 1] $localT
+        $out    += Get-BlendedHex -hex1 $anchors[$seg] -hex2 $anchors[$seg + 1] -t $localT
     }
     return $out
 }
@@ -298,6 +303,8 @@ function Get-GachaState([string]$path) {
 }
 
 function Save-GachaState($state, [string]$path) {
+    $dir = Split-Path -Parent $path
+    if ($dir -and -not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
     $state | ConvertTo-Json -Depth 6 | Set-Content -Path $path -Encoding UTF8
 }
 
