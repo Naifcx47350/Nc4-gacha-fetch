@@ -145,6 +145,26 @@ function Resolve-PaletteColors($palette) {
     return $g
 }
 
+function Get-RelativeLuma([int[]]$rgb) {
+    return (0.2126 * $rgb[0]) + (0.7152 * $rgb[1]) + (0.0722 * $rgb[2])
+}
+
+# Black terminals swallow the first dark stops. Mix toward white until readable.
+function Get-ReadableHex([string]$hex, [double]$minLuma = 68) {
+    $rgb = Convert-HexToRgb $hex
+    $luma = Get-RelativeLuma $rgb
+    if ($luma -ge $minLuma) { return $hex }
+    $t = ($minLuma - $luma) / (255.0 - [math]::Max($luma, 0.001))
+    $r = [int][math]::Round($rgb[0] + ((255 - $rgb[0]) * $t))
+    $g = [int][math]::Round($rgb[1] + ((255 - $rgb[1]) * $t))
+    $b = [int][math]::Round($rgb[2] + ((255 - $rgb[2]) * $t))
+    return ('#{0:X2}{1:X2}{2:X2}' -f $r, $g, $b)
+}
+
+function Protect-PaletteStops([string[]]$stops) {
+    return @($stops | ForEach-Object { Get-ReadableHex $_ })
+}
+
 function Get-TemplateInfoHeight([string]$templateText) {
     $types = [regex]::Matches($templateText, '"type"\s*:').Count
     $breaks = [regex]::Matches($templateText, '(?m)^\s*"break"\s*,?\s*$').Count
@@ -524,13 +544,13 @@ if ($Palette) {
     $chosenPalette = $palettes[0]
 }
 
-$gradient = Resolve-PaletteColors $chosenPalette
+$gradient = Protect-PaletteStops (Resolve-PaletteColors $chosenPalette)
 $keyGradient = $gradient
 if ($chosenPalette.KeyAnchors) {
-    $keyGradient = Resolve-PaletteColors @{
+    $keyGradient = Protect-PaletteStops (Resolve-PaletteColors @{
         Anchors = $chosenPalette.KeyAnchors
         Mode    = $chosenPalette.KeyMode
-    }
+    })
 }
 if ($LogoWhite) { $gradient = @('#ffffff') * 9 }
 
@@ -574,8 +594,11 @@ for ($i = 1; $i -le 9; $i++) {
 
 $kcMatches = [regex]::Matches($cfg, '"keyColor"\s*:\s*"#[0-9A-Fa-f]{3,8}"')
 $kcCount = $kcMatches.Count
+# Skip the two darkest logo stops so System / OS / Kernel stay visible.
+$keyStart = 2
+$keySpan = 8 - $keyStart
 for ($i = $kcCount - 1; $i -ge 0; $i--) {
-    $gidx = if ($kcCount -le 1) { 8 } else { [int][math]::Round($i / ($kcCount - 1) * 8) }
+    $gidx = if ($kcCount -le 1) { 8 } else { $keyStart + [int][math]::Round($i / ($kcCount - 1) * $keySpan) }
     $hex = $keyGradient[$gidx]
     $m = $kcMatches[$i]
     $new = '"keyColor": "' + $hex + '"'
