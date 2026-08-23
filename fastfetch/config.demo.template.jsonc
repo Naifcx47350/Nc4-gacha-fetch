@@ -57,7 +57,7 @@
 
     {
       "type": "custom",
-      "key": " Display",
+      "key": " Display 1",
       "keyColor": "#878685",
       "format": "1920x1080 @ 60Hz"
     },
@@ -69,13 +69,13 @@
     },
     {
       "type": "custom",
-      "key": "├󰢮 GPU",
+      "key": "├󰢮 GPU 1",
       "keyColor": "#a1a09f",
       "format": "Example GPU"
     },
     {
       "type": "custom",
-      "key": "├ Disk",
+      "key": "├ Disk C:\\",
       "keyColor": "#949392",
       "format": "(42%)  256 GiB / 512 GiB"
     },

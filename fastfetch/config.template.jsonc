@@ -54,10 +54,12 @@
 
     "break",
 
+    // {1} in a key numbers repeated hardware: displays and GPUs get 1, 2, 3...
+    // and disks get their drive letter, so two of anything stay tellable apart.
     {
       "type": "display",
-      "key": " Display",
-      "format": "{3}",
+      "key": " Display {1}",
+      "format": "{1}x{2} @ {3}Hz",
       "keyColor": "#878685"
     },
     {
@@ -68,13 +70,13 @@
     },
     {
       "type": "gpu",
-      "key": "├󰢮 GPU",
-      "format": "{1} {2}",
+      "key": "├󰢮 GPU {1}",
+      "format": "{2}",
       "keyColor": "#a1a09f"
     },
     {
       "type": "disk",
-      "key": "├ Disk",
+      "key": "├ Disk {1}",
       "format": "({3})  {1} / {2}",
       "keyColor": "#949392"
     },

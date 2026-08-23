@@ -25,7 +25,7 @@ Add `-WhatIf` to see exactly what either one would do first.
 
 ## ASCII art (fetch)
 
-1. Pick a category folder under [`fastfetch/Ascii/`](../fastfetch/README.md) (`Cats`, `Dogs`, `Memes`, …).
+1. Pick a category folder under `fastfetch/Ascii/` (`Cats`, `Dogs`, `Memes`, …) — the [engine folder guide](../fastfetch/README.md) lists every category.
 2. Save a plain `.txt` drawing there.
 3. Tag the colour slots:
 
@@ -62,7 +62,7 @@ Keep the rank honest: an Elite palette should live on Elite art.
 
 ## Prompt
 
-The theme file is [`powershell/prompt/themes/nc4.omp.json`](../powershell/prompt/README.md).
+The theme file is [`powershell/prompt/themes/nc4.omp.json`](../powershell/prompt/themes/nc4.omp.json), described in the [prompt folder guide](../powershell/prompt/README.md).
 
 If the installer found a theme you already had (`Nc4.omp.json` or `themes\nc4.omp.json` next to your PowerShell 7 profile), it **left that file alone**. Edit the one that is actually on disk:
 

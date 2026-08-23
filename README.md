@@ -9,24 +9,26 @@ A Windows Terminal look that rolls a new ASCII logo every time you open a shell.
 [![PowerShell 7](https://img.shields.io/badge/PowerShell-7-5391FE?logo=powershell&logoColor=white)](docs/getting-started.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
 
-[What you get](#what-you-get) · [Before you start](#before-you-start) · [Pick one](#pick-one) · [Install](#install) · [Guides](#guides)
+[What it is](#what-it-is) · [Screenshots](#what-it-looks-like) · [Install](#install) · [Try it first](#try-it-without-installing) · [Guides](#guides)
 
 </div>
 
 ---
 
-This repo is two pieces. You can install **both**, or only the one you want.
+## What it is
+
+Two pieces. You can install **both**, or only the one you want.
 
 | Piece | In plain language |
 | --- | --- |
 | **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**. A **1 in 100 shiny** can swap the colours. |
 | **Prompt** | The line you type on. An [oh-my-posh](https://ohmyposh.dev/) theme with your name, how long the last command took, RAM, time, git, and a few extras (icons, fuzzy find, aliases). |
 
-You do not need to read the scripts. Copy the steps, pick a number, open a new tab.
+You do not need to read the scripts. Follow the five steps, pick a number when asked, open a new tab.
 
 ---
 
-## What you get
+## What it looks like
 
 <p align="center">
   <img src="docs/images/Art/image1.png" alt="Fetch roll: empty_skull with the Rust palette" width="900">
@@ -65,106 +67,126 @@ You do not need to read the scripts. Copy the steps, pick a number, open a new t
 
 ---
 
-## Before you start
-
-You need **Windows 10 or 11**, **Windows Terminal**, **PowerShell 7**, and a **Nerd Font** (the screenshots use MesloLGL). Those are explained in everyday language here:
-
-**[Getting started — what to install, and what our installer will not touch](docs/getting-started.md)**
-
-> [!IMPORTANT]
-> Use **PowerShell 7** inside **Windows Terminal**. The older app named **Windows PowerShell** is a different program. If icons look like empty boxes, the font is not set yet.
-
-Short version of the safety rules:
-
-- Only **PowerShell 7** is changed. Windows PowerShell 5.1, conda, and your module folder stay put — the installer refuses to run anywhere else.
-- Anything replaced is copied first to a dated `*.bak-…` file. The three newest are kept.
-- If you already have an oh-my-posh theme in that folder, it is left alone.
-- Your gacha pity and roll history survive a reinstall.
-
-Nervous? Add `-WhatIf` to any install command to print every change it *would* make without touching a single file:
-
-```powershell
-./install.ps1 1 -WhatIf
-```
-
-Want a look **without** changing your real terminal? Skip to [Try it first](#try-it-first).
-
----
-
-## Pick one
-
-| | I want… | Command | Longer page |
-| :---: | --- | --- | --- |
-| **1** | The prompt **and** the rolling logo | `./install.ps1 1 -InstallModules -InstallTools` | [powershell/all](powershell/all/README.md) |
-| **2** | Only the fancy prompt | `./install.ps1 2 -InstallModules -InstallTools` | [powershell/prompt](powershell/prompt/README.md) |
-| **3** | Only the rolling logo | `./install.ps1 3 -InstallTools` | [powershell/fetch](powershell/fetch/README.md) |
-
-The extra words on the command mean:
-
-- **`-InstallTools`** — also download the programs that option needs (oh-my-posh and/or fastfetch)
-- **`-InstallModules`** — also download the prompt add-ons (options 1 and 2 only)
-
-`1` / `All` / `Both`, `2` / `Prompt`, and `3` / `Fetch` / `Gacha` are the same choices.
-
----
-
 ## Install
 
-Do these in order, in a **PowerShell 7** tab.
+Five steps, in order. Everything is typed into a **PowerShell 7** tab.
 
-### 1. Allow the install script to run
+**You will need** Windows 10 or 11, Windows Terminal, PowerShell 7, and a Nerd Font. If any of that is new to you, [getting started](docs/getting-started.md) explains each one in everyday language — then come back here.
 
-Windows sometimes blocks scripts you download. This line allows them **for your user account only**:
+> [!IMPORTANT]
+> **PowerShell 7** and **Windows PowerShell** are two different apps. You want the one simply called *PowerShell*. Check with `$PSVersionTable.PSVersion` — the first number should be 7.
+
+> [!NOTE]
+> **Nothing is replaced without a backup.** Only PowerShell 7's own startup file is touched — Windows PowerShell 5.1, conda, your modules, and an oh-my-posh theme you already have are all left alone, and your gacha pity survives reinstalls. Full list: [what the installer touches](docs/getting-started.md#what-the-installer-will-and-will-not-touch).
+
+### Step 1 — Allow the script to run
+
+Windows blocks downloaded scripts by default. This allows them **for your user account only**:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-### 2. Get a copy of this project
+### Step 2 — Download the project
 
 ```powershell
 git clone https://github.com/naifcx47350/nc4-gacha-fetch.git
 cd nc4-gacha-fetch
 ```
 
-No Git? On the GitHub page click **Code → Download ZIP**, unzip it, then `cd` into that folder. More on this in [getting started](docs/getting-started.md#git-or-a-zip).
+No Git? Click the green **Code** button at the top of this repo → **Download ZIP**, unzip it, then `cd` into that folder. If you would rather install Git first, [getting started has the download link](docs/getting-started.md#git-or-a-zip).
 
-### 3. Run one install command
+### Step 3 — Choose what you want, and run it
 
-Paste **one** line from the table above. Example for everything:
+Remember the two pieces: the **fetch** is the picture drawn once when a tab opens, the **prompt** is the coloured line you type on all session. Neither needs the other.
+
+Pick one of these three and run it. Nothing else in this step.
+
+> [!TIP]
+> **Not sure? Pick 1.** It's what the screenshots show, and you can switch later by running the installer again with a different number.
+
+#### 1 — Both
 
 ```powershell
 ./install.ps1 1 -InstallModules -InstallTools
 ```
 
-Wait until it prints `Done.`
+A logo rolls when you open a tab, and the coloured prompt is there while you work. Replaces whatever startup screen and prompt you have now.
 
-### 4. Point Windows Terminal at the font
+Best if you don't already have a terminal setup you're attached to. → [details](powershell/all/README.md)
+
+#### 2 — Prompt only
+
+```powershell
+./install.ps1 2 -InstallModules -InstallTools
+```
+
+The coloured line with git branch, timing, RAM and the rest. **No logo rolls** — whatever appears when you open a tab today keeps appearing, including nothing at all.
+
+Best if you like your current startup screen, or don't want a picture every time. → [details](powershell/prompt/README.md)
+
+#### 3 — Fetch only
+
+```powershell
+./install.ps1 3 -InstallTools
+```
+
+The rolling logo and specs, plus the `reroll` command. **Your prompt is left exactly as it is** — if you've already themed it, that work is safe.
+
+Best if you came here for the gacha and nothing else. → [details](powershell/fetch/README.md)
+
+The installer prints what it does as it goes. Wait for `Done.`
+
+<details>
+<summary><strong>What are those extra words on the command?</strong></summary>
+
+<br>
+
+Both are optional. They only save you from installing things by hand first.
+
+| Flag | What it does | Leave it off when |
+| --- | --- | --- |
+| `-InstallTools` | Downloads the programs that option needs — [oh-my-posh](https://ohmyposh.dev/) for the prompt, [fastfetch](https://github.com/fastfetch-cli/fastfetch) for the logo | You already have them |
+| `-InstallModules` | Downloads the four prompt add-ons: `posh-git`, `Terminal-Icons`, `PSFzf`, `z` | You already have them, or you chose option 3, which doesn't use them |
+
+Both use `winget`, which ships with Windows 10 and 11. If it's missing the installer says so and carries on — see [getting started](docs/getting-started.md#tools-the-installer-can-fetch-for-you).
+
+Add **`-WhatIf`** to any of the three commands to print every change it *would* make without touching a single file:
+
+```powershell
+./install.ps1 1 -WhatIf
+```
+
+If you'd rather type words than numbers, `1` / `All` / `Both`, `2` / `Prompt`, and `3` / `Fetch` / `Gacha` mean the same thing.
+
+</details>
+
+### Step 4 — Point Windows Terminal at the font
 
 Settings (`Ctrl+,`) → **Defaults** (or your PowerShell profile) → **Appearance** → Font face → `MesloLGL Nerd Font Mono`.
 
 Optional: the [terminal snippet](terminal/README.md) also copies the screenshot colours and transparency.
 
-### 5. Open a new tab
+### Step 5 — Open a new tab
 
 Close the old one. A **new** PowerShell 7 tab loads the new startup file.
 
 > [!TIP]
-> You should see a picture and specs (options 1 and 3) and a coloured prompt (options 1 and 2). Type `reroll` if you installed a fetch option and want another logo right now.
+> You should see a picture and specs (options 1 and 3) and a coloured prompt (options 1 and 2). Type `reroll` for another logo right away.
 
 If that is not what you see, open [troubleshooting](docs/troubleshooting.md).
 
 ---
 
-## Try it first
+## Try it without installing
 
-This opens a throwaway window that reads **this folder**. Your everyday PowerShell profile is not replaced.
+Rather look before changing anything? Do steps 1 and 2 above, then run this instead of step 3:
 
 ```powershell
 .\test-shell.ps1
 ```
 
-Specs in that window are dummy numbers (same as the screenshots). Add `-Live` if you want your real hardware.
+That opens a throwaway window using this folder. Your everyday PowerShell profile is **not** replaced. Specs shown are dummy numbers, the same ones in the screenshots — add `-Live` for your real hardware.
 
 Walk every colour set or every logo, still without installing:
 

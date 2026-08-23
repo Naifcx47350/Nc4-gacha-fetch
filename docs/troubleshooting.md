@@ -92,3 +92,5 @@ $env:FASTFETCH_DISABLE = '1'
 ## I added art in the repo but my real terminal did not change
 
 The live copy lives next to your PowerShell 7 profile, not in the git folder. Run `./install.ps1` again for the option you use, or preview with [`.\test-shell.ps1`](../powershell/test/README.md).
+
+If you add art often, install once with `-Link` and this stops happening — your shell reads the repo directly. See [working on art without reinstalling](customize.md#working-on-art-without-reinstalling).

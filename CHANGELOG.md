@@ -35,6 +35,9 @@ First public release.
 - Timestamped backups are pruned to the three newest (`-KeepBackups` to change).
 - `randfetch.bat` requires PowerShell 7 rather than falling back to 5.1, which wrote a byte-order mark that fastfetch could not parse.
 - `-Test` no longer stages the engine for prompt-only installs.
+- The `Display` line printed only the refresh rate (`60`) instead of the resolution; it now reads `1920x1080 @ 60Hz`.
+- The `GPU` line repeated the vendor (`NVIDIA NVIDIA GeForce…`).
+- Repeated hardware is now labelled: displays and GPUs are numbered, and each disk shows its drive letter, so machines with two monitors, two drives, or a discrete plus integrated GPU no longer show identical keys.
 
 [Unreleased]: https://github.com/naifcx47350/nc4-gacha-fetch/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/naifcx47350/nc4-gacha-fetch/releases/tag/v1.0.0

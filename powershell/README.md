@@ -7,7 +7,7 @@ This folder holds the four startup files. You do not copy them by hand — [`ins
 | [all/](all/README.md) | `./install.ps1 1` | Prompt + gacha fetch |
 | [prompt/](prompt/README.md) | `./install.ps1 2` | Prompt only |
 | [fetch/](fetch/README.md) | `./install.ps1 3` | Gacha fetch only |
-| [test/](test/README.md) | `.\test-shell.ps1` | Same as both, but **not** written to your live profile |
+| [powershell/test/](test/README.md) | `.\test-shell.ps1` | Same as both, but **not** written to your live profile |
 
 `profile.ps1` is an optional conda snippet. The installer never overwrites your real All-hosts / conda profile.
 

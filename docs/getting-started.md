@@ -1,6 +1,8 @@
-# Before you start
+# Getting started
 
-You only need four things. If you already have them, go back to the [install steps](../README.md#install).
+Four things need to be in place before you install. If you already have them, go straight to the [install steps](../README.md#install).
+
+Also on this page: [tools the installer can fetch](#tools-the-installer-can-fetch-for-you) · [Git, or a ZIP](#git-or-a-zip) · [what the installer touches](#what-the-installer-will-and-will-not-touch) · [previewing with `-WhatIf`](#see-it-before-you-commit-to-it)
 
 ## 1. Windows 10 or 11
 

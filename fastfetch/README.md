@@ -4,6 +4,8 @@ This folder is the fetch: ASCII art, colour templates, and the script that rolls
 
 You do not run these files by double-clicking. After [option 1](../powershell/all/README.md) or [option 3](../powershell/fetch/README.md), a copy lives next to your PowerShell 7 profile. [`test-shell.ps1`](../powershell/test/README.md) reads **this** copy in the repo.
 
+Installing with `-Link` skips the copy entirely and runs this folder, which is the easier setup if you are adding art. See [customize](../docs/customize.md#working-on-art-without-reinstalling).
+
 ## Layout
 
 ```
