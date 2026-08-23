@@ -458,7 +458,7 @@ $asciiCatalog = @{
     # --- People ---
     'standing_guy.txt'   = @{ Rarity = 'Rare';       Category = 'People' }
     'bald_guy.txt'       = @{ Rarity = 'Mundane';    Category = 'People' }
-    'angry_monk.txt'     = @{ Rarity = 'Scarce';  Category = 'People' }
+    'angry_golrie.txt'   = @{ Rarity = 'Scarce';  Category = 'People' }
     'biker.txt'          = @{ Rarity = 'Rare';      Category = 'People' }
 
     # --- Food ---
