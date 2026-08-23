@@ -1,15 +1,6 @@
-// ============================================================
-//  nc4-gacha-fetch :: Windows Terminal appearance snippet
-//
-//  These are the appearance bits that make the look in the README.
-//  Merge them into your Windows Terminal settings.json:
-//    Windows Terminal -> Settings -> "Open JSON file" (bottom-left gear),
-//  then copy the "font"/"opacity"/etc. keys into:
-//    profiles > defaults
-//
-//  Requires the "MesloLGL Nerd Font" (any Nerd Font works, but the art
-//  and prompt glyphs need a Nerd Font). See the README for install steps.
-// ============================================================
+// Windows Terminal appearance used in the README.
+// Settings -> Open JSON file, then merge the keys under profiles.defaults.
+// Needs a Nerd Font (MesloLGL Nerd Font Mono matches the shots).
 {
   "profiles": {
     "defaults": {
@@ -23,13 +14,4 @@
     }
   },
   "useAcrylicInTabRow": true
-
-  // Optional second profile (paste into profiles.list) to switch
-  // into the test engine without replacing your live PowerShell profile:
-  // {
-  //   "name": "nc4 gacha (test)",
-  //   "commandline": "pwsh -NoProfile -NoExit -File C:\\workspace_47\\nc4-gacha-fetch\\test-shell.ps1"
-  // }
-  // Demo / dummy specs:
-  //   ... -File ...\\test-shell.ps1 -Demo
 }

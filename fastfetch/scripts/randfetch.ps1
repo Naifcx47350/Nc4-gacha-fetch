@@ -23,9 +23,6 @@
 .PARAMETER Shiny
     Force a shiny roll.
 
-.PARAMETER Quiet
-    Suppress the coloured roll-summary banner.
-
 .PARAMETER NoRun
     Regenerate the config but do not launch fastfetch.
 
@@ -49,7 +46,6 @@ param(
     [string]$Palette,
     [string]$Art,
     [switch]$Shiny,
-    [switch]$Quiet,
     [switch]$NoRun,
     [switch]$List,
     [switch]$Stats,
@@ -59,7 +55,6 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if ($env:NC4_FETCH_QUIET) { $Quiet = $true }
 if ($env:NC4_FETCH_DEMO)  { $Demo = $true }
 
 # ---- Paths -----------------------------------------------------------------

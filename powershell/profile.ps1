@@ -1,4 +1,4 @@
-# Optional AllHosts snippet. Merge into $PROFILE.CurrentUserAllHosts if you use conda.
+# Optional AllHosts snippet for conda. Copy into $PROFILE.CurrentUserAllHosts to use it.
 
 $condaCandidates = @(
     "$env:USERPROFILE\anaconda3\Scripts\conda.exe",

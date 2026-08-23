@@ -1,8 +1,6 @@
 # nc4-gacha-fetch — PowerShell 7 profile
-# https://github.com/<your-user>/nc4-gacha-fetch
 
-# Optional fixed start folder. Leave unset to stay where the terminal opened.
-# $Nc4StartPath = 'C:\workspace_47'
+# Set $Nc4StartPath to a folder if you want every new shell to start there.
 
 $Nc4Theme = if ($env:NC4_THEME) {
     $env:NC4_THEME
@@ -64,6 +62,8 @@ if (Get-Module -ListAvailable -Name PSFzf) {
     Import-Module PSFzf
     Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
 }
+
+Import-Module z -ErrorAction SilentlyContinue
 
 Set-Alias vim  nvim
 Set-Alias ll   ls

@@ -16,11 +16,6 @@ A PowerShell 7 setup for Windows Terminal with a **gacha startup fetch**. Each s
 
 </details>
 
-### Prompt
-
-![Prompt](docs/images/terminal/image1.png)
-![Prompt with git](docs/images/terminal/image3.png)
-
 ---
 
 ## Features
@@ -48,7 +43,8 @@ A PowerShell 7 setup for Windows Terminal with a **gacha startup fetch**. Each s
 ## Install
 
 ```powershell
-git clone https://github.com/<your-user>/nc4-gacha-fetch.git
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+git clone https://github.com/naifcx47350/nc4-gacha-fetch.git
 cd nc4-gacha-fetch
 ./install.ps1 -InstallModules -InstallTools
 ```
@@ -77,7 +73,7 @@ reroll                              # roll again in this session
 ```
 
 ```powershell
-$rf = "$HOME/Documents/PowerShell/fastfetch/scripts/randfetch.ps1"
+$rf = Join-Path (Split-Path $PROFILE) 'fastfetch\scripts\randfetch.ps1'
 
 & $rf                               # random roll
 & $rf -List                         # palettes and art
@@ -159,10 +155,10 @@ nc4-gacha-fetch/
 ├─ fastfetch/           # engine, templates, Ascii/
 ├─ test/                # palette and art previews
 ├─ terminal/            # Windows Terminal snippet
-└─ docs/images/         # Art/ and terminal/ screenshots
+└─ docs/images/Art/     # fetch screenshots
 ```
 
-After install the engine also lives in `Documents\PowerShell\fastfetch`. Runtime files `config.jsonc` and `ascii_current.txt` are generated.
+After install the engine also lives next to your PowerShell 7 profile, in `fastfetch\`. Runtime files `config.jsonc` and `ascii_current.txt` are generated.
 
 ---
 
@@ -172,6 +168,8 @@ After install the engine also lives in `Documents\PowerShell\fastfetch`. Runtime
 - Layout inspired by [FastCat](https://github.com/m3tozz/FastCat)
 - [oh-my-posh](https://ohmyposh.dev/)
 - Gacha idea inspired by [routefetch](https://github.com/TitaniteScale/routefetch)
+
+Some ASCII pieces are fan-made likenesses (games, memes). They are included for personal terminal use, not as original commercial art.
 
 ## License
 

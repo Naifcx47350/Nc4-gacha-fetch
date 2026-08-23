@@ -61,6 +61,8 @@ if (Get-Module -ListAvailable -Name PSFzf) {
     Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
 }
 
+Import-Module z -ErrorAction SilentlyContinue
+
 Set-Alias vim  nvim
 Set-Alias ll   ls
 Set-Alias g    git
