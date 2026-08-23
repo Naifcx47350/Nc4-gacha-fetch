@@ -7,7 +7,7 @@
     On each run this:
       1. Rolls a random ASCII logo, weighted by per-art rarity.
       2. Picks a colour set from that same rarity (shiny may override).
-      3. Has a 1/100 chance of a "shiny" roll (hard pity at 100).
+      3. Has a 1/100 chance of a "shiny" roll (hard pity at 250).
       4. Regenerates config.jsonc from a template, rewriting colours and
          the Art / Palette / Pity lines.
       5. Runs fastfetch.
@@ -200,7 +200,8 @@ function Test-GeneratedConfig([string]$text) {
 
 # ---- Rarity model ----------------------------------------------------------
 # Mundane (often) → Scarce → Rare → Elite → Mythic (almost never). Shiny is 1/100.
-$rarityWeights = @{ Mundane = 45; Scarce = 25; Rare = 15; Elite = 10; Mythic = 5 }
+# Weights sum to 100, so each one reads directly as a percentage.
+$rarityWeights = @{ Mundane = 48; Scarce = 25; Rare = 15; Elite = 10; Mythic = 2 }
 $rarityOrder = @('Mundane', 'Scarce', 'Rare', 'Elite', 'Mythic', 'Shiny')
 $rarityMeta = @{
     Mundane  = @{ Color = '#c0c0c0'; Sym = [char]0x25CF }
@@ -211,15 +212,13 @@ $rarityMeta = @{
     Shiny     = @{ Color = '#ffe566'; Sym = [char]0x2728 }
 }
 
-$shinyHardPity = 100
-$mythicHardPity = 80
-$mythicSoftPity = 50
+$shinyHardPity = 250
+$mythicHardPity = 100
 
-function Get-WeightedRarity([object[]]$items, [hashtable]$Boost) {
+function Get-WeightedRarity([object[]]$items) {
     $present = $items | ForEach-Object { $_.Rarity } | Select-Object -Unique
     $pool = foreach ($r in $present) {
         $w = if ($rarityWeights.ContainsKey($r)) { $rarityWeights[$r] } else { 1 }
-        if ($Boost -and $Boost.ContainsKey($r)) { $w = [int]$Boost[$r] }
         [pscustomobject]@{ Rarity = $r; Weight = $w }
     }
     $total = ($pool | Measure-Object -Property Weight -Sum).Sum
@@ -232,8 +231,8 @@ function Get-WeightedRarity([object[]]$items, [hashtable]$Boost) {
     return @($present)[-1]
 }
 
-function Get-WeightedPick([object[]]$items, [hashtable]$Boost) {
-    $rarity = Get-WeightedRarity $items $Boost
+function Get-WeightedPick([object[]]$items) {
+    $rarity = Get-WeightedRarity $items
     $bucket = @($items | Where-Object { $_.Rarity -eq $rarity })
     return $bucket[(Get-Random -Minimum 0 -Maximum $bucket.Count)]
 }
@@ -242,8 +241,7 @@ function Select-GachaItem {
     param(
         [object[]]$Items,
         [string]$ForcedName,
-        [string]$ForceRarity,
-        [hashtable]$SoftBoost
+        [string]$ForceRarity
     )
     if ($ForcedName) {
         $hit = $Items | Where-Object { $_.Name -eq $ForcedName -or $_.Name -eq "$ForcedName.txt" } | Select-Object -First 1
@@ -256,7 +254,7 @@ function Select-GachaItem {
             return $bucket[(Get-Random -Minimum 0 -Maximum $bucket.Count)]
         }
     }
-    return Get-WeightedPick $Items $SoftBoost
+    return Get-WeightedPick $Items
 }
 
 # ---- State -----------------------------------------------------------------
@@ -533,12 +531,10 @@ $shinyPityHit = (-not $Shiny) -and ($state.pityShiny -ge ($shinyHardPity - 1))
 $isShiny = [bool]($Shiny -or $shinyPityHit -or ((Get-Random -Minimum 1 -Maximum 101) -eq 1))
 
 $artForceRarity = $null
-$artBoost = $null
-if (-not $Art -and $hasMythicArt) {
-    if ($state.pityMythicArt -ge ($mythicHardPity - 1)) { $artForceRarity = 'Mythic' }
-    elseif ($state.pityMythicArt -ge $mythicSoftPity) { $artBoost = @{ Mythic = 12 } }
+if (-not $Art -and $hasMythicArt -and $state.pityMythicArt -ge ($mythicHardPity - 1)) {
+    $artForceRarity = 'Mythic'
 }
-$chosenArt = Select-GachaItem -Items $asciiFiles -ForcedName $Art -ForceRarity $artForceRarity -SoftBoost $artBoost
+$chosenArt = Select-GachaItem -Items $asciiFiles -ForcedName $Art -ForceRarity $artForceRarity
 
 $rankPals = @($palettes | Where-Object { $_.Rarity -eq $chosenArt.Rarity })
 if ($Palette) {

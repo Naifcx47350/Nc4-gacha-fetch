@@ -11,7 +11,7 @@ First public release.
 ### Added
 
 - **Gacha startup fetch.** Each new PowerShell 7 session rolls a rarity-weighted ASCII logo and paints [fastfetch](https://github.com/fastfetch-cli/fastfetch) with a colour set from that same rank. `reroll` rolls again in place.
-- **Six ranks** — Mundane, Scarce, Rare, Elite, Mythic, and a 1-in-100 Shiny that overrides the palette. Hard pity at 100 for shiny; mythic art gets a soft boost at 50 and hard pity at 80.
+- **Six ranks** — Mundane 48%, Scarce 25%, Rare 15%, Elite 10%, Mythic 2%, plus a 1-in-100 Shiny that overrides the palette. Hard pity at 250 for shiny and 100 for mythic art.
 - **26 palettes and 80 ASCII pieces** across twelve categories.
 - **Three install options** — `1` prompt and fetch, `2` prompt only, `3` fetch only.
 - **`-Link` install mode** that runs the engine straight from a clone, so art you add appears in the next tab without reinstalling.

@@ -18,11 +18,11 @@ Chance is **not** printed. The weights below are the real odds.
 
 | Rank | Symbol | How often | Feel |
 | --- | --- | --- | --- |
-| Mundane | ● | 45 | Common, quiet greys and papers |
-| Scarce | ◆ | 25 | A bit harder, earth and metal |
-| Rare | ★ | 15 | Gold and royal colours |
-| Elite | ✦ | 10 | Bright ice and diamond |
-| Mythic | ✹ | 5 | Loud, saturated sets |
+| Mundane | ● | 48% | Common, quiet greys and papers |
+| Scarce | ◆ | 25% | A bit harder, earth and metal |
+| Rare | ★ | 15% | Gold and royal colours |
+| Elite | ✦ | 10% | Bright ice and diamond |
+| Mythic | ✹ | 2% | Loud, saturated sets |
 | **Shiny** | ✨ | 1 in 100 | Colour override only — the art stays whatever it was |
 
 Shiny is a **palette** event. It does not replace the logo with a special drawing.
@@ -31,8 +31,8 @@ Shiny is a **palette** event. It does not replace the logo with a special drawin
 
 The game will not leave you dry forever.
 
-- **Shiny** — guaranteed on the 100th roll if you have not seen one
-- **Mythic art** — a small boost starting at 50 rolls, guaranteed at 80
+- **Shiny** — guaranteed on the 250th roll if you have not seen one
+- **Mythic art** — guaranteed on the 100th roll without one. There is no gradual boost before that; the odds stay a flat 2% until the guarantee.
 
 There is no separate pity for palettes. If the art is Rare, the palette is Rare (unless shiny overrides it).
 
