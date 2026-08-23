@@ -16,6 +16,12 @@ A PowerShell 7 setup for Windows Terminal with a **gacha startup fetch**. Each s
 
 </details>
 
+### Prompt
+
+![Prompt](docs/images/terminal/image1.png)
+![Prompt](docs/images/terminal/image2.png)
+![Prompt with git](docs/images/terminal/image3.png)
+
 ---
 
 ## Features
@@ -155,7 +161,7 @@ nc4-gacha-fetch/
 ├─ fastfetch/           # engine, templates, Ascii/
 ├─ test/                # palette and art previews
 ├─ terminal/            # Windows Terminal snippet
-└─ docs/images/Art/     # fetch screenshots
+└─ docs/images/         # Art/ and terminal/ screenshots
 ```
 
 After install the engine also lives next to your PowerShell 7 profile, in `fastfetch\`. Runtime files `config.jsonc` and `ascii_current.txt` are generated.
