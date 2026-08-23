@@ -1,0 +1,110 @@
+// Dummy specs for previews (-Demo).
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "source": "@@LOGO_SOURCE@@",
+    "color": {
+      "1": "#403f3e",
+      "2": "#4b4a49",
+      "3": "#565554",
+      "4": "#626160",
+      "5": "#6e6d6c",
+      "6": "#7a7978",
+      "7": "#878685",
+      "8": "#949392",
+      "9": "#a1a09f"
+    }
+  },
+  "modules": [
+    {
+      "type": "custom",
+      "key": "󰣇 System",
+      "keyColor": "#403f3e",
+      "format": "nc4@gacha-fetch"
+    },
+    {
+      "type": "custom",
+      "key": "⊞ OS",
+      "keyColor": "#4b4a49",
+      "format": "Windows 11"
+    },
+    {
+      "type": "custom",
+      "key": "├ Kernel",
+      "keyColor": "#565554",
+      "format": "10.0.26100"
+    },
+    {
+      "type": "custom",
+      "key": "├󰏖 Packages",
+      "keyColor": "#626160",
+      "format": "42"
+    },
+    {
+      "type": "custom",
+      "key": "├ Terminal",
+      "keyColor": "#6e6d6c",
+      "format": "Windows Terminal"
+    },
+    {
+      "type": "custom",
+      "key": "╰ WM",
+      "keyColor": "#7a7978",
+      "format": "Desktop Window Manager"
+    },
+
+    "break",
+
+    {
+      "type": "custom",
+      "key": " Display",
+      "keyColor": "#878685",
+      "format": "1920x1080 @ 60Hz"
+    },
+    {
+      "type": "custom",
+      "key": "├ CPU",
+      "keyColor": "#949392",
+      "format": "Example CPU"
+    },
+    {
+      "type": "custom",
+      "key": "├󰢮 GPU",
+      "keyColor": "#a1a09f",
+      "format": "Example GPU"
+    },
+    {
+      "type": "custom",
+      "key": "├ Disk",
+      "keyColor": "#949392",
+      "format": "(42%)  256 GiB / 512 GiB"
+    },
+    {
+      "type": "custom",
+      "key": "╰ RAM",
+      "keyColor": "#878685",
+      "format": "(50%)  8 GiB / 16 GiB"
+    },
+
+    "break",
+
+    {
+      "type": "custom",
+      "key": "Art",
+      "keyColor": "@@ART_KEYCOLOR@@",
+      "format": "@@ART_FORMAT@@"
+    },
+    {
+      "type": "custom",
+      "key": "Palette",
+      "keyColor": "@@PALETTE_KEYCOLOR@@",
+      "format": "@@PALETTE_FORMAT@@"
+    },
+    {
+      "type": "custom",
+      "key": "Pity",
+      "keyColor": "@@PITY_KEYCOLOR@@",
+      "format": "@@PITY_FORMAT@@"
+    }
+  ]
+}

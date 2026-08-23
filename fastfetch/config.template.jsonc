@@ -1,0 +1,109 @@
+// Template for the live fetch. randfetch.ps1 rebuilds config.jsonc from this file.
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "source": "@@LOGO_SOURCE@@",
+    "color": {
+      "1": "#403f3e",
+      "2": "#4b4a49",
+      "3": "#565554",
+      "4": "#626160",
+      "5": "#6e6d6c",
+      "6": "#7a7978",
+      "7": "#878685",
+      "8": "#949392",
+      "9": "#a1a09f"
+    }
+  },
+  "modules": [
+    {
+      "type": "title",
+      "key": "󰣇 System",
+      "keyColor": "#403f3e",
+      "format": "{6}{7}{8}"
+    },
+    {
+      "type": "os",
+      "key": "⊞ OS",
+      "format": "{3}",
+      "keyColor": "#4b4a49"
+    },
+    {
+      "type": "kernel",
+      "key": "├ Kernel",
+      "format": "{2}",
+      "keyColor": "#565554"
+    },
+    {
+      "type": "packages",
+      "key": "├󰏖 Packages",
+      "keyColor": "#626160"
+    },
+    {
+      "type": "terminal",
+      "key": "├ Terminal",
+      "format": "{5}",
+      "keyColor": "#6e6d6c"
+    },
+    {
+      "type": "wm",
+      "key": "╰ WM",
+      "format": "{2}",
+      "keyColor": "#7a7978"
+    },
+
+    "break",
+
+    {
+      "type": "display",
+      "key": " Display",
+      "format": "{3}",
+      "keyColor": "#878685"
+    },
+    {
+      "type": "cpu",
+      "key": "├ CPU",
+      "format": "{1}",
+      "keyColor": "#949392"
+    },
+    {
+      "type": "gpu",
+      "key": "├󰢮 GPU",
+      "format": "{1} {2}",
+      "keyColor": "#a1a09f"
+    },
+    {
+      "type": "disk",
+      "key": "├ Disk",
+      "format": "({3})  {1} / {2}",
+      "keyColor": "#949392"
+    },
+    {
+      "type": "memory",
+      "key": "╰ RAM",
+      "format": "({3})  {1} / {2}",
+      "keyColor": "#878685"
+    },
+
+    "break",
+
+    {
+      "type": "custom",
+      "key": "Art",
+      "keyColor": "@@ART_KEYCOLOR@@",
+      "format": "@@ART_FORMAT@@"
+    },
+    {
+      "type": "custom",
+      "key": "Palette",
+      "keyColor": "@@PALETTE_KEYCOLOR@@",
+      "format": "@@PALETTE_FORMAT@@"
+    },
+    {
+      "type": "custom",
+      "key": "Pity",
+      "keyColor": "@@PITY_KEYCOLOR@@",
+      "format": "@@PITY_FORMAT@@"
+    }
+  ]
+}
