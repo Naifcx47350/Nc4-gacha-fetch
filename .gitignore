@@ -4,6 +4,9 @@ fastfetch/Ascii/ascii_current.txt
 gacha-state.json
 fastfetch/gacha-state.json
 
+# Half-written config left behind if a roll is interrupted
+*.tmp
+
 # Working notes (not for clone users)
 DEVMAP.md
 
@@ -17,3 +20,7 @@ __pycache__/
 # OS cruft
 Thumbs.db
 .DS_Store
+
+# Editors
+.vscode/
+.idea/
