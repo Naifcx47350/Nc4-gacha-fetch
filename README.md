@@ -1,6 +1,6 @@
 <div align="center">
 
-# nc4-gacha-fetch
+# Nc4-gacha-fetch
 
 A Windows Terminal look that rolls a new ASCII logo every time you open a shell.
 
@@ -123,7 +123,7 @@ Best if you don't already have a terminal setup you're attached to. → [details
 
 The coloured line with git branch, timing, RAM, and the rest. **No logo rolls** - whatever appears when you open a tab today keeps appearing, including nothing at all.
 
-Best if you like your current startup screen, or don't want a picture every time. → [details](powershell/prompt/README.md)
+It is the preferred option if you like your current startup screen, or don't want a picture every time. → [details](powershell/prompt/README.md)
 
 #### 3 - Fetch only
 
