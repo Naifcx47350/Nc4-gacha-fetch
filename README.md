@@ -21,7 +21,7 @@ Two pieces. You can install **both**, or only the one you want.
 
 | Piece | In plain language |
 | --- | --- |
-| **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**. A **1 in 100 shiny** can swap the colours. |
+| **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**. A **1 in 250 shiny** can swap the colours. |
 | **Prompt** | The line you type on. An [oh-my-posh](https://ohmyposh.dev/) theme with your name, how long the last command took, RAM, time, git, and a few extras (icons, fuzzy find, aliases). |
 
 You do not need to read the scripts. Follow the five steps, pick a number when asked, open a new tab.
