@@ -22,7 +22,7 @@ Notable changes to this project. Format follows [Keep a Changelog](https://keepa
 ### Added
 
 - **Three new palettes** — `Fern` (Scarce), `Rose` (Rare), and `Sapphire` (Elite), bringing the pool to 27 rank palettes plus 2 exclusives.
-- **Preview walker** `.\test\preview-palettes.ps1 -Both` shows each palette next to its shiny form, tagged `[shiny]` or `[exclusive]`.
+- `shinyKind` on each `gacha-state.json` history entry, recording whether a roll was a `foil` or an `exclusive`.
 
 ## [1.0.0] - 2026-08-23
 
