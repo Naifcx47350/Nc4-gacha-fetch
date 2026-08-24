@@ -7,7 +7,7 @@ Your current oh-my-posh (or default) prompt stays. You get the fetch hook and `r
 ## What you get
 
 - A rarity-weighted ASCII logo each new Windows Terminal session
-- A colour set from that same rank (shiny may override colours)
+- A colour set from that same rank (a shiny refoils it; an exclusive replaces it)
 - Art / Palette / Pity lines under the specs
 - `reroll` to roll again in the same window
 

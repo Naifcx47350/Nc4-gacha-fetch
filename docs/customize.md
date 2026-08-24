@@ -46,7 +46,7 @@ Python 3.9+ is only needed for that tagging script.
 Add a block to `$palettes` in `fastfetch/scripts/randfetch.ps1`:
 
 ```powershell
-@{ Name = 'My Scheme'; Rarity = 'Elite'; Anchors = @('#101020', '#4040ff', '#ffffff') }
+@{ Name = 'My Scheme'; Rarity = 'Elite'; Anchors = @('#3a4a8c', '#4040ff', '#ffffff') }
 ```
 
 | Field | What it does |
@@ -59,6 +59,39 @@ Add a block to `$palettes` in `fastfetch/scripts/randfetch.ps1`:
 | `KeyAnchors` | Colours only the labels on the right (System, OS, …) |
 
 Keep the rank honest: an Elite palette should live on Elite art.
+
+### Do not pick anchors that are too dark
+
+This is the one rule that catches people out. Anything darker than **luma 68** gets mixed
+toward white before it is drawn, so it stays visible on a black terminal — and that also
+drains the colour out of it. A near-black `#0a0000` does not arrive as black, it arrives
+as the grey `#4A4242`, and your deep red is gone.
+
+So a palette that is meant to end on a dark colour should end *at* that floor on a
+saturated one, not below it. `#a82c2c` sits just above the line and is drawn exactly as
+written; `#4a0510` does not and comes out a muddy `#6F3840`. You can check any colour with:
+
+```powershell
+$hex = '#a82c2c'
+$v = [Convert]::ToInt32($hex.TrimStart('#'), 16)
+(0.2126 * (($v -shr 16) -band 255)) + (0.7152 * (($v -shr 8) -band 255)) + (0.0722 * ($v -band 255))
+```
+
+Luma is linear, so if every anchor clears 68, every blended stop between them does too.
+
+Green clears the floor easily and deep blues and reds are the hardest, because the eye
+weights green far more heavily than blue.
+
+### Which direction it runs
+
+Most palettes climb from dark to light. Each rank also carries at least one that runs the
+other way so the collection is not all the same shape — those are tagged `# bright -> dark`
+in the engine. If you are adding one of those, the rule above is what decides how dark you
+can actually finish.
+
+You do not need to design a shiny version. Every palette gets one automatically: a shiny
+roll refoils whatever colours it landed on. See [How the gacha works](gacha.md#shiny), and
+preview yours with `.\test\preview-palettes.ps1 -Both`.
 
 ## Prompt
 

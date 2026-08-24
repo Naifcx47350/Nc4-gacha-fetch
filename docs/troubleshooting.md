@@ -32,9 +32,17 @@ To add the roll later, run [option 1](../powershell/all/README.md) or [option 3]
 
 ## The logo appears but the prompt looks like the default
 
-You installed **option 3** (fetch only). That is expected.
+Two different causes, same look.
 
-To add the prompt later, run [option 1](../powershell/all/README.md) or [option 2](../powershell/prompt/README.md).
+**You installed option 3** (fetch only). That is expected. To add the prompt later, run [option 1](../powershell/all/README.md) or [option 2](../powershell/prompt/README.md).
+
+**You installed option 1 or 2, and the prompt is still the plain PowerShell one.** The logo does not need oh-my-posh, so the fetch can work while the prompt quietly skips. After `winget` installs oh-my-posh, a **new tab is not enough** — Windows Terminal keeps the old PATH until every window is closed.
+
+1. Fully quit Windows Terminal (every window, not just the tab).
+2. Open it again, PowerShell 7 tab.
+3. Check: `Get-Command oh-my-posh`
+
+If that prints a path, the next tab should show the coloured prompt. If it still says the command was not found, install it by hand with `winget install JanDeDobbeleer.OhMyPosh`, then quit and reopen again.
 
 ## `winget` was not found
 

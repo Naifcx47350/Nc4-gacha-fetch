@@ -21,7 +21,7 @@ Two pieces. You can install **both**, or only the one you want.
 
 | Piece | In plain language |
 | --- | --- |
-| **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**. A **1 in 100 shiny** can swap the colours. |
+| **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**. A **1 in 1000 shiny** refoils those colours into a spectrum sweep. |
 | **Prompt** | The line you type on. An [oh-my-posh](https://ohmyposh.dev/) theme with your name, how long the last command took, RAM, time, git, and a few extras (icons, fuzzy find, aliases). |
 
 You do not need to read the scripts. Follow the five steps, pick a number when asked, open a new tab.
@@ -171,6 +171,8 @@ Optional: the [terminal snippet](terminal/README.md) also copies the screenshot 
 
 Close the old one. A **new** PowerShell 7 tab loads the new startup file.
 
+If you used `-InstallTools` and the prompt is still the plain PowerShell one, **quit Windows Terminal completely** (every window) and open it again. A new tab is not always enough for the PATH change winget just made.
+
 > [!TIP]
 > You should see a picture and specs (options 1 and 3) and a coloured prompt (options 1 and 2). Type `reroll` for another logo right away.
 
@@ -191,8 +193,9 @@ That opens a throwaway window using this folder. Your everyday PowerShell profil
 Walk every colour set or every logo, still without installing:
 
 ```powershell
-.\test\preview-palettes.ps1
-.\test\preview-arts.ps1
+.\test\preview-palettes.ps1          # every colour set
+.\test\preview-palettes.ps1 -Both    # each one next to its shiny form
+.\test\preview-arts.ps1              # every logo
 ```
 
 Details: [test profile](powershell/test/README.md) · [preview scripts](test/README.md)

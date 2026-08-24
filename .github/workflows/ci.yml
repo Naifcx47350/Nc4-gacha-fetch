@@ -60,7 +60,7 @@ jobs:
         shell: pwsh
         env:
           NC4_FETCH_ROOT: ${{ github.workspace }}\fastfetch
-          NC4_FETCH_NOSTATE: '1'
+          NC4_FETCH_NOSTATE: "1"
         run: |
           ./fastfetch/scripts/randfetch.ps1 -List | Out-Null
           ./fastfetch/scripts/randfetch.ps1 -Stats | Out-Null
@@ -73,18 +73,30 @@ jobs:
         shell: pwsh
         env:
           NC4_FETCH_ROOT: ${{ github.workspace }}\fastfetch
-          NC4_FETCH_NOSTATE: '1'
+          NC4_FETCH_NOSTATE: "1"
         run: |
           $src = Get-Content ./fastfetch/scripts/randfetch.ps1 -Raw
           $names = [regex]::Matches($src, "Name\s*=\s*'([^']+)'") | ForEach-Object { $_.Groups[1].Value }
           foreach ($n in $names) {
-              ./fastfetch/scripts/randfetch.ps1 -NoRun -Palette $n | Out-Null
-              $cfg = Get-Content ./fastfetch/config.jsonc -Raw
-              $cfg = [regex]::Replace($cfg, '(?m)^\s*//.*$', '')
-              try { $null = $cfg | ConvertFrom-Json }
-              catch { throw "Palette '$n' produced invalid config: $($_.Exception.Message)" }
+              foreach ($foil in $false, $true) {
+                  if ($foil) { ./fastfetch/scripts/randfetch.ps1 -NoRun -Palette $n -Shiny | Out-Null }
+                  else       { ./fastfetch/scripts/randfetch.ps1 -NoRun -Palette $n | Out-Null }
+                  $cfg = Get-Content ./fastfetch/config.jsonc -Raw
+                  $cfg = [regex]::Replace($cfg, '(?m)^\s*//.*$', '')
+                  $label = if ($foil) { "Shiny $n" } else { $n }
+                  try { $null = $cfg | ConvertFrom-Json }
+                  catch { throw "Palette '$label' produced invalid config: $($_.Exception.Message)" }
+
+                  # Refoiling must never push a logo stop below the readability floor.
+                  $block = [regex]::Match($cfg, '"color"\s*:\s*\{(.+?)\}', 'Singleline').Groups[1].Value
+                  foreach ($hex in [regex]::Matches($block, '#[0-9a-fA-F]{6}')) {
+                      $v = [Convert]::ToInt32($hex.Value.TrimStart('#'), 16)
+                      $luma = (0.2126 * (($v -shr 16) -band 255)) + (0.7152 * (($v -shr 8) -band 255)) + (0.0722 * ($v -band 255))
+                      if ($luma -lt 60) { throw "Palette '$label' emitted unreadable stop $($hex.Value) (luma $([int]$luma))" }
+                  }
+              }
           }
-          "$($names.Count) palettes render valid config."
+          "$($names.Count) palettes render valid config, plain and shiny."
 
       - name: Installer dry run
         shell: pwsh

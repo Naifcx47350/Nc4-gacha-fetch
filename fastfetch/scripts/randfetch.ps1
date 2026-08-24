@@ -6,8 +6,11 @@
 .DESCRIPTION
     On each run this:
       1. Rolls a random ASCII logo, weighted by per-art rarity.
-      2. Picks a colour set from that same rarity (shiny may override).
-      3. Has a 1/100 chance of a "shiny" roll (hard pity at 250).
+      2. Picks a colour set from that same rarity.
+      3. Has a 1/1000 chance of a "shiny" roll (hard pity at 500). A shiny
+         refoils the colour set it landed on rather than replacing it, so
+         "Shiny Silver" and "Shiny Molten Lava" are both possible. One shiny
+         in six is an exclusive instead, which overrides the colours outright.
       4. Regenerates config.jsonc from a template, rewriting colours and
          the Art / Palette / Pity lines.
       5. Runs fastfetch.
@@ -170,6 +173,101 @@ function Protect-PaletteStops([string[]]$stops) {
     return @($stops | ForEach-Object { Get-ReadableHex $_ })
 }
 
+# ---- Shiny foil ------------------------------------------------------------
+# A shiny does not swap the palette out, it refoils the one that was rolled.
+# Every stop keeps the brightness it already had, so the readability pass above
+# never has to rescue a stop that was fine before. What changes is the hue,
+# which walks further around the wheel with each step up the ramp, and the
+# saturation, which is raised to a floor rather than replaced. The floor is what
+# gives the grey Mundane palettes any colour at all; palettes that are already
+# vivid sit above it and keep their own.
+$foilHueDrift  = 30      # degrees of hue added per stop along the ramp
+$foilSatFloor  = 0.60    # saturation a refoiled stop is lifted to, never past
+$foilGlintPeak = 0.75    # how far the specular streak pulls a stop toward white
+$foilGlintInk  = '#fffdf0'
+
+function Format-RgbHex([double]$r, [double]$g, [double]$b) {
+    $ri = [int][math]::Max(0, [math]::Min(255, [math]::Round($r)))
+    $gi = [int][math]::Max(0, [math]::Min(255, [math]::Round($g)))
+    $bi = [int][math]::Max(0, [math]::Min(255, [math]::Round($b)))
+    return ('#{0:X2}{1:X2}{2:X2}' -f $ri, $gi, $bi)
+}
+
+function Convert-HexToHsl([string]$hex) {
+    $c = Convert-HexToRgb $hex
+    $r = $c[0] / 255.0
+    $g = $c[1] / 255.0
+    $b = $c[2] / 255.0
+    $max = [math]::Max($r, [math]::Max($g, $b))
+    $min = [math]::Min($r, [math]::Min($g, $b))
+    $l = ($max + $min) / 2.0
+    $d = $max - $min
+    if ($d -eq 0) { return @(0.0, 0.0, $l) }
+    $s = if ($l -gt 0.5) { $d / (2.0 - $max - $min) } else { $d / ($max + $min) }
+    $h = 0.0
+    if ($max -eq $r) { $h = (($g - $b) / $d) % 6 }
+    elseif ($max -eq $g) { $h = (($b - $r) / $d) + 2 }
+    else { $h = (($r - $g) / $d) + 4 }
+    return @(($h * 60.0), $s, $l)
+}
+
+function Get-HueChannel([double]$p, [double]$q, [double]$t) {
+    if ($t -lt 0) { $t += 1 }
+    if ($t -gt 1) { $t -= 1 }
+    if ($t -lt (1.0 / 6.0)) { return $p + (($q - $p) * 6.0 * $t) }
+    if ($t -lt 0.5) { return $q }
+    if ($t -lt (2.0 / 3.0)) { return $p + (($q - $p) * ((2.0 / 3.0) - $t) * 6.0) }
+    return $p
+}
+
+function Convert-HslToHex([double]$h, [double]$s, [double]$l) {
+    $hn = ((($h % 360) + 360) % 360) / 360.0
+    if ($s -le 0) {
+        $v = $l * 255
+        return (Format-RgbHex -r $v -g $v -b $v)
+    }
+    $q = if ($l -lt 0.5) { $l * (1 + $s) } else { $l + $s - ($l * $s) }
+    $p = (2 * $l) - $q
+    $r = (Get-HueChannel -p $p -q $q -t ($hn + (1.0 / 3.0))) * 255
+    $g = (Get-HueChannel -p $p -q $q -t $hn) * 255
+    $b = (Get-HueChannel -p $p -q $q -t ($hn - (1.0 / 3.0))) * 255
+    return (Format-RgbHex -r $r -g $g -b $b)
+}
+
+# Rotating a hue at fixed HSL lightness still moves perceived brightness, so put
+# the stop back on the luma it started with.
+function Get-LumaMatchedHex([string]$hex, [double]$target) {
+    $c = Convert-HexToRgb $hex
+    $luma = Get-RelativeLuma $c
+    if ($luma -le 1) { return (Format-RgbHex -r $target -g $target -b $target) }
+    if ($target -le $luma) {
+        $k = $target / $luma
+        return (Format-RgbHex -r ($c[0] * $k) -g ($c[1] * $k) -b ($c[2] * $k))
+    }
+    $t = ($target - $luma) / (255.0 - $luma)
+    return (Format-RgbHex `
+        -r ($c[0] + ((255 - $c[0]) * $t)) `
+        -g ($c[1] + ((255 - $c[1]) * $t)) `
+        -b ($c[2] + ((255 - $c[2]) * $t)))
+}
+
+function Get-ShinyStops([string[]]$Stops, [int]$GlintAt) {
+    $out = @()
+    for ($i = 0; $i -lt $Stops.Count; $i++) {
+        $hsl = Convert-HexToHsl $Stops[$i]
+        $lit = Get-RelativeLuma (Convert-HexToRgb $Stops[$i])
+        $foil = Convert-HslToHex -h ($hsl[0] + ($i * $foilHueDrift)) -s ([math]::Max($hsl[1], $foilSatFloor)) -l $hsl[2]
+        $foil = Get-LumaMatchedHex -hex $foil -target $lit
+        # Light catching the card: a three-stop highlight centred on $GlintAt.
+        $near = [math]::Max(0.0, 1.0 - ([math]::Abs($i - $GlintAt) / 2.0))
+        if ($near -gt 0) {
+            $foil = Get-BlendedHex -hex1 $foil -hex2 $foilGlintInk -t ($near * $foilGlintPeak)
+        }
+        $out += $foil
+    }
+    return $out
+}
+
 function Get-TemplateInfoHeight([string]$templateText) {
     $types = [regex]::Matches($templateText, '"type"\s*:').Count
     $breaks = [regex]::Matches($templateText, '(?m)^\s*"break"\s*,?\s*$').Count
@@ -199,7 +297,7 @@ function Test-GeneratedConfig([string]$text) {
 }
 
 # ---- Rarity model ----------------------------------------------------------
-# Mundane (often) → Scarce → Rare → Elite → Mythic (almost never). Shiny is 1/100.
+# Mundane (often) → Scarce → Rare → Elite → Mythic (almost never). Shiny is 1/1000.
 # Weights sum to 100, so each one reads directly as a percentage.
 $rarityWeights = @{ Mundane = 48; Scarce = 25; Rare = 15; Elite = 10; Mythic = 2 }
 $rarityOrder = @('Mundane', 'Scarce', 'Rare', 'Elite', 'Mythic', 'Shiny')
@@ -210,10 +308,16 @@ $rarityMeta = @{
     Elite     = @{ Color = '#e8f6ff'; Sym = [char]0x2726 }
     Mythic    = @{ Color = '#c77dff'; Sym = [char]0x2739 }
     Shiny     = @{ Color = '#ffe566'; Sym = [char]0x2728 }
+    Exclusive = @{ Color = '#ffffff'; Sym = [char]0x2748 }
 }
 
-$shinyHardPity = 250
+$shinyOdds = 1000
+$shinyHardPity = 500
 $mythicHardPity = 100
+
+# Most shinies refoil the palette they rolled. This many-to-one slice becomes an
+# exclusive instead, which throws the rank palette away entirely.
+$shinyExclusiveOdds = 6
 
 function Get-WeightedRarity([object[]]$items) {
     $present = $items | ForEach-Object { $_.Rarity } | Select-Object -Unique
@@ -334,6 +438,17 @@ function Show-GachaStats($state) {
     }
 }
 
+# Anchors are the colours a palette is built from; New-Gradient interpolates
+# nine stops across them. Ramps run dark to light unless tagged otherwise, and
+# every rank carries at least one that runs bright to dark so the collection is
+# not all the same shape.
+#
+# When adding a palette, keep every anchor at luma 68 or above. Get-ReadableHex
+# mixes anything darker toward white so it stays visible on a black terminal,
+# and that also drains the colour out of it: #0a0000 arrives on screen as the
+# grey #4A4242. A ramp meant to end dark should end *at* that floor on a
+# saturated colour rather than below it. Luma is linear in RGB, so anchors above
+# the floor guarantee every interpolated stop between them is above it too.
 $palettes = @(
     # --- Mundane ---
     @{ Name = 'Gray';   Rarity = 'Mundane'; Anchors = @('#2b2a28', '#6e6a64', '#c4bfb6') }
@@ -342,33 +457,36 @@ $palettes = @(
     @{ Name = 'Tin';    Rarity = 'Mundane'; Anchors = @('#2e3236', '#6d767c', '#b7c0c4', '#e4e8ea') }
     @{ Name = 'Dust';   Rarity = 'Mundane'; Anchors = @('#3a2e24', '#8a7358', '#d2b48c', '#efe4d2') }
     @{ Name = 'Khaki';  Rarity = 'Mundane'; Anchors = @('#2c2a18', '#6b6b3d', '#b8a36e', '#e6d9a8') }
-    @{ Name = 'Denim';  Rarity = 'Mundane'; Anchors = @('#1a2433', '#3d5a7a', '#6f8faf', '#c5d4e0') }
+    @{ Name = 'Denim';  Rarity = 'Mundane'; Anchors = @('#dfe7ee', '#a3b8cc', '#63819f', '#31506e') }  # bright -> dark
     # --- Scarce ---
     @{ Name = 'Bronze'; Rarity = 'Scarce'; Anchors = @('#2a2410', '#6e5a24', '#c4a35a') }
     @{ Name = 'Copper'; Rarity = 'Scarce'; Anchors = @('#3b1208', '#b85c38', '#f0a090') }
     @{ Name = 'Rust';   Rarity = 'Scarce'; Anchors = @('#2a0c08', '#8b3a1a', '#c44536', '#e8a87c') }
     @{ Name = 'Moss';   Rarity = 'Scarce'; Anchors = @('#121a0e', '#3d5a2c', '#7a9b4a', '#c4d6a0') }
+    @{ Name = 'Fern';   Rarity = 'Scarce'; Anchors = @('#eef4e2', '#bcd49e', '#7aa257', '#2f5526') }  # bright -> dark
     # --- Rare ---
     @{ Name = 'Gold';      Rarity = 'Rare'; Anchors = @('#3d2f00', '#ffd700') }
     @{ Name = 'Molten';    Rarity = 'Rare'; Anchors = @('#1a0000', '#7a2a00', '#ff6a00', '#ffd700') }
     @{ Name = 'Platinum';  Rarity = 'Rare'; Anchors = @('#2c2c30', '#8d8d96', '#d8d6d0', '#f4f1ea') }
-    @{ Name = 'Royal';     Rarity = 'Rare'; Anchors = @('#fff3b0', '#ffd166', '#e85d04', '#9b2226', '#4a0000') }
+    @{ Name = 'Royal';     Rarity = 'Rare'; Anchors = @('#fffbe6', '#ffe98a', '#ffc93c', '#f0722a', '#bf2732') }  # bright -> dark
+    @{ Name = 'Rose';      Rarity = 'Rare'; Anchors = @('#fff5f7', '#ffd0dc', '#f57ba6', '#b3255c') }  # bright -> dark
     # --- Elite ---
-    @{ Name = 'Diamond'; Rarity = 'Elite'; Anchors = @('#1a2a33', '#e8f6ff') }
-    @{ Name = 'Aurora';  Rarity = 'Elite'; Anchors = @('#020617', '#064e3b', '#67e8f9', '#c084fc') }
-    @{ Name = 'Ice';     Rarity = 'Elite'; Anchors = @('#021a24', '#0a4a6e', '#2ec4e8', '#e8f6ff') }
-    @{ Name = 'Pearl';   Rarity = 'Elite'; Anchors = @('#2a2030', '#8a6e88', '#f0d6e4', '#fff8f4') }
+    @{ Name = 'Diamond';  Rarity = 'Elite'; Anchors = @('#1a2a33', '#e8f6ff') }
+    @{ Name = 'Aurora';   Rarity = 'Elite'; Anchors = @('#020617', '#064e3b', '#67e8f9', '#c084fc') }
+    @{ Name = 'Ice';      Rarity = 'Elite'; Anchors = @('#021a24', '#0a4a6e', '#2ec4e8', '#e8f6ff') }
+    @{ Name = 'Pearl';    Rarity = 'Elite'; Anchors = @('#fff8f4', '#f0d6e4', '#a888a6', '#584060') }  # bright -> dark
+    @{ Name = 'Sapphire'; Rarity = 'Elite'; Anchors = @('#eaf4ff', '#a3ccf7', '#4f8ad9', '#26499d') }  # bright -> dark
     # --- Mythic ---
-    @{ Name = 'Magic Purple'; Rarity = 'Mythic'; Anchors = @('#1a0033', '#c77dff') }
+    @{ Name = 'Magic Purple'; Rarity = 'Mythic'; Anchors = @('#f0dcff', '#c77dff', '#6b34a0') }  # bright -> dark
     @{ Name = 'Hex';          Rarity = 'Mythic'; Anchors = @('#031a16', '#0f766e', '#5eead4', '#d9f99d', '#facc15') }
     @{ Name = 'Molten Lava';  Rarity = 'Mythic'; Anchors = @('#1a0000', '#7a2a00', '#ff4d00', '#ffd700', '#fff3b0') }
     @{ Name = 'Prismatic';    Rarity = 'Mythic'; Anchors = @('#ff0040', '#ff8c00', '#ffee00', '#00e676', '#00e5ff', '#2979ff', '#d500f9') }
-    @{ Name = 'Void Walker';  Rarity = 'Mythic'; Anchors = @('#ffe4e6', '#fb7185', '#be123c', '#4a0510', '#0a0000') }
+    @{ Name = 'Void Walker';  Rarity = 'Mythic'; Anchors = @('#42454e', '#a02a48', '#bf284a', '#b2b2b7', '#f4f5f7') }
 )
 
 $shinyPalettes = @(
-    @{ Name = 'Starlight';  Rarity = 'Shiny'; Anchors = @('#eef2ff', '#ffffff', '#fdf4ff', '#e0f2fe') }
-    @{ Name = 'Shiny Gold'; Rarity = 'Shiny'; Anchors = @('#ffffff', '#ffe566', '#ffd700', '#123a4a') }
+    @{ Name = 'Starlight';  Rarity = 'Shiny'; Anchors = @('#ffffff', '#dfe8ff', '#a9bcf0', '#6b7fc9', '#3f4f96') }
+    @{ Name = 'Shiny Gold'; Rarity = 'Shiny'; Anchors = @('#ffffff', '#ffeeaa', '#ffd700', '#d9a520', '#9a6b0f') }
 )
 
 # ---- ASCII catalogue -------------------------------------------------------
@@ -528,7 +646,7 @@ if ($Stats) { Show-GachaStats $state; return }
 $hasMythicArt = @($asciiFiles | Where-Object { $_.Rarity -eq 'Mythic' }).Count -gt 0
 
 $shinyPityHit = (-not $Shiny) -and ($state.pityShiny -ge ($shinyHardPity - 1))
-$isShiny = [bool]($Shiny -or $shinyPityHit -or ((Get-Random -Minimum 1 -Maximum 101) -eq 1))
+$isShiny = [bool]($Shiny -or $shinyPityHit -or ((Get-Random -Minimum 1 -Maximum ($shinyOdds + 1)) -eq 1))
 
 $artForceRarity = $null
 if (-not $Art -and $hasMythicArt -and $state.pityMythicArt -ge ($mythicHardPity - 1)) {
@@ -537,31 +655,52 @@ if (-not $Art -and $hasMythicArt -and $state.pityMythicArt -ge ($mythicHardPity 
 $chosenArt = Select-GachaItem -Items $asciiFiles -ForcedName $Art -ForceRarity $artForceRarity
 
 $rankPals = @($palettes | Where-Object { $_.Rarity -eq $chosenArt.Rarity })
+$isExclusive = $false
 if ($Palette) {
     $chosenPalette = Select-GachaItem -Items ($palettes + $shinyPalettes) -ForcedName $Palette
-} elseif ($isShiny) {
+    $isExclusive = ($chosenPalette.Rarity -eq 'Shiny')
+} elseif ($isShiny -and (Get-Random -Minimum 1 -Maximum ($shinyExclusiveOdds + 1)) -eq 1) {
     $chosenPalette = $shinyPalettes[(Get-Random -Minimum 0 -Maximum $shinyPalettes.Count)]
+    $isExclusive = $true
 } elseif ($rankPals.Count -gt 0) {
     $chosenPalette = $rankPals[(Get-Random -Minimum 0 -Maximum $rankPals.Count)]
 } else {
     $chosenPalette = $palettes[0]
 }
 
-$gradient = Protect-PaletteStops (Resolve-PaletteColors $chosenPalette)
+# Exclusives are already their own thing, so only an ordinary shiny gets refoiled.
+$isFoil = $isShiny -and -not $isExclusive
+$glintAt = if ($isFoil) { Get-Random -Minimum 3 -Maximum 8 } else { 0 }
+
+$stops = Resolve-PaletteColors $chosenPalette
+if ($isFoil) { $stops = Get-ShinyStops -Stops $stops -GlintAt $glintAt }
+$gradient = Protect-PaletteStops $stops
 $keyGradient = $gradient
 if ($chosenPalette.KeyAnchors) {
-    $keyGradient = Protect-PaletteStops (Resolve-PaletteColors @{
+    $keyStops = Resolve-PaletteColors @{
         Anchors = $chosenPalette.KeyAnchors
         Mode    = $chosenPalette.KeyMode
-    })
+    }
+    if ($isFoil) { $keyStops = Get-ShinyStops -Stops $keyStops -GlintAt $glintAt }
+    $keyGradient = Protect-PaletteStops $keyStops
 }
 if ($LogoWhite) { $gradient = @('#ffffff') * 9 }
 
 $am = $rarityMeta[$chosenArt.Rarity]
 $artDisplay = [IO.Path]::GetFileNameWithoutExtension($chosenArt.Name)
 $rankInk = $am.Color
-$artLabel = '{0}  {1}' -f $artDisplay, (Format-AnsiText $rankInk ('{0} {1}' -f $am.Sym, $chosenArt.Rarity))
+$rankTag = Format-AnsiText $rankInk ('{0} {1}' -f $am.Sym, $chosenArt.Rarity)
 $palLabel = $chosenPalette.Name
+if ($isExclusive) {
+    $xm = $rarityMeta['Exclusive']
+    $rankTag = (Format-AnsiText $xm.Color $xm.Sym) + ' ' + $rankTag
+    $palLabel = (Format-AnsiText $xm.Color $xm.Sym) + ' ' + $chosenPalette.Name
+} elseif ($isFoil) {
+    $sm = $rarityMeta['Shiny']
+    $rankTag = (Format-AnsiText $sm.Color $sm.Sym) + ' ' + $rankTag
+    $palLabel = (Format-AnsiText $sm.Color ('{0} Shiny' -f $sm.Sym)) + ' ' + $chosenPalette.Name
+}
+$artLabel = '{0}  {1}' -f $artDisplay, $rankTag
 
 $nextShiny = if ($isShiny) { 0 } else { $state.pityShiny + 1 }
 $nextMythicArt = if ($chosenArt.Rarity -eq 'Mythic') { 0 } else { $state.pityMythicArt + 1 }
@@ -573,6 +712,8 @@ if ($DryRun) {
     $prefix = if ($Demo) { '[dry-run demo] ' } else { '[dry-run] ' }
     Write-Host ($prefix + "art $($chosenArt.Name) $($chosenArt.Rarity)")
     Write-Host ($prefix + "palette $($chosenPalette.Name) $($chosenPalette.Rarity)")
+    if ($isExclusive) { Write-Host ($prefix + 'shiny exclusive') }
+    elseif ($isFoil) { Write-Host ($prefix + "shiny foil glint@$glintAt") }
     Write-Host ($prefix + $pityLabel)
     Write-Host ($prefix + 'no files written')
     return
@@ -654,6 +795,7 @@ if (-not $env:NC4_FETCH_NOSTATE) {
         palette        = $chosenPalette.Name
         paletteRarity  = $chosenPalette.Rarity
         shiny          = [bool]$isShiny
+        shinyKind      = if ($isExclusive) { 'exclusive' } elseif ($isFoil) { 'foil' } else { $null }
     }
     $state.history = @($entry) + @($state.history) | Select-Object -First 20
     Save-GachaState $state $statePath
