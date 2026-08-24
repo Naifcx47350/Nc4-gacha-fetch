@@ -17,14 +17,14 @@ A Windows Terminal look that rolls a new ASCII logo every time you open a shell.
 
 ## What it is
 
-Two pieces. You can install **both**, or only the one you want.
+Two pieces. You can install **both**or just the one you want.
 
 | Piece | In plain language |
 | --- | --- |
-| **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**. A **1 in 1000 shiny** refoils those colours into a spectrum sweep. |
+| **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**; with a small chance (1 in 1000) for a shiny variant that refoils the colours into a spectrum sweep. |
 | **Prompt** | The line you type on. An [oh-my-posh](https://ohmyposh.dev/) theme with your name, how long the last command took, RAM, time, git, and a few extras (icons, fuzzy find, aliases). |
 
-You do not need to read the scripts. Follow the five steps, pick a number when asked, open a new tab.
+You do not need to read the scripts. Follow the five steps, pick a number when asked, and open a new tab.
 
 ---
 
@@ -33,7 +33,7 @@ You do not need to read the scripts. Follow the five steps, pick a number when a
 <p align="center">
   <img src="docs/images/Art/image1.png" alt="Fetch roll: empty_skull with the Rust palette" width="900">
 </p>
-<p align="center"><em>A fetch roll — art, palette, and pity under the specs.</em></p>
+<p align="center"><em>A fetch roll - art, palette, and pity under the specs.</em></p>
 
 <p align="center">
   <img src="docs/images/Art/image4.png" alt="Fetch roll: smug_cat with the Diamond palette" width="900">
@@ -53,7 +53,7 @@ You do not need to read the scripts. Follow the five steps, pick a number when a
 <p align="center">
   <img src="docs/images/terminal/image1.png" alt="The coloured PowerShell prompt" width="900">
 </p>
-<p align="center"><em>The prompt — what you type on after the fetch.</em></p>
+<p align="center"><em>The prompt - what you type after the fetch.</em></p>
 
 <details>
 <summary>More prompt shots</summary>
@@ -69,17 +69,17 @@ You do not need to read the scripts. Follow the five steps, pick a number when a
 
 ## Install
 
-Five steps, in order. Everything is typed into a **PowerShell 7** tab.
+Five steps, in order. Everything is typed into the **PowerShell 7** tab.
 
-**You will need** Windows 10 or 11, Windows Terminal, PowerShell 7, and a Nerd Font. If any of that is new to you, [getting started](docs/getting-started.md) explains each one in everyday language — then come back here.
+**You will need** Windows 10 or 11, Windows Terminal, PowerShell 7, and a Nerd Font. If any of that is new to you, [getting started](docs/getting-started.md) explains each one in everyday language - then come back here.
 
 > [!IMPORTANT]
-> **PowerShell 7** and **Windows PowerShell** are two different apps. You want the one simply called *PowerShell*. Check with `$PSVersionTable.PSVersion` — the first number should be 7.
+> **PowerShell 7** and **Windows PowerShell** are two different apps. You want the one called *PowerShell*. Check with `$PSVersionTable.PSVersion` - the first number should be 7.
 
 > [!NOTE]
-> **Nothing is replaced without a backup.** Only PowerShell 7's own startup file is touched — Windows PowerShell 5.1, conda, your modules, and an oh-my-posh theme you already have are all left alone, and your gacha pity survives reinstalls. Full list: [what the installer touches](docs/getting-started.md#what-the-installer-will-and-will-not-touch).
+> **Nothing is replaced without a backup.** Only PowerShell 7's own startup file is touched - Windows PowerShell 5.1, conda, your modules, and an oh-my-posh theme you already have are all left alone, and your gacha pity survives reinstalls. Full list: [what the installer touches](docs/getting-started.md#what-the-installer-will-and-will-not-touch).
 
-### Step 1 — Allow the script to run
+### Step 1 - Allow the script to run
 
 Windows blocks downloaded scripts by default. This allows them **for your user account only**:
 
@@ -87,7 +87,7 @@ Windows blocks downloaded scripts by default. This allows them **for your user a
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-### Step 2 — Download the project
+### Step 2 - Download the project
 
 ```powershell
 git clone https://github.com/naifcx47350/nc4-gacha-fetch.git
@@ -96,16 +96,16 @@ cd nc4-gacha-fetch
 
 No Git? Click the green **Code** button at the top of this repo → **Download ZIP**, unzip it, then `cd` into that folder. If you would rather install Git first, [getting started has the download link](docs/getting-started.md#git-or-a-zip).
 
-### Step 3 — Choose what you want, and run it
+### Step 3 - Choose what you want, and run it
 
-Remember the two pieces: the **fetch** is the picture drawn once when a tab opens, the **prompt** is the coloured line you type on all session. Neither needs the other.
+Remember the two pieces: the **fetch** is the picture drawn once when a tab opens; the **prompt** is the coloured line you type in every session. Neither needs the other.
 
 Pick one of these three and run it. Nothing else in this step.
 
 > [!TIP]
 > **Not sure? Pick 1.** It's what the screenshots show, and you can switch later by running the installer again with a different number.
 
-#### 1 — Both
+#### 1 - Both
 
 ```powershell
 ./install.ps1 1 -InstallModules -InstallTools
@@ -115,23 +115,23 @@ A logo rolls when you open a tab, and the coloured prompt is there while you wor
 
 Best if you don't already have a terminal setup you're attached to. → [details](powershell/all/README.md)
 
-#### 2 — Prompt only
+#### 2 - Prompt only
 
 ```powershell
 ./install.ps1 2 -InstallModules -InstallTools
 ```
 
-The coloured line with git branch, timing, RAM and the rest. **No logo rolls** — whatever appears when you open a tab today keeps appearing, including nothing at all.
+The coloured line with git branch, timing, RAM, and the rest. **No logo rolls** - whatever appears when you open a tab today keeps appearing, including nothing at all.
 
 Best if you like your current startup screen, or don't want a picture every time. → [details](powershell/prompt/README.md)
 
-#### 3 — Fetch only
+#### 3 - Fetch only
 
 ```powershell
 ./install.ps1 3 -InstallTools
 ```
 
-The rolling logo and specs, plus the `reroll` command. **Your prompt is left exactly as it is** — if you've already themed it, that work is safe.
+The rolling logo and specs, plus the `reroll` command. **Your prompt is left exactly as it is** - if you've already themed it, that work is safe.
 
 Best if you came here for the gacha and nothing else. → [details](powershell/fetch/README.md)
 
@@ -146,10 +146,10 @@ Both are optional. They only save you from installing things by hand first.
 
 | Flag | What it does | Leave it off when |
 | --- | --- | --- |
-| `-InstallTools` | Downloads the programs that option needs — [oh-my-posh](https://ohmyposh.dev/) for the prompt, [fastfetch](https://github.com/fastfetch-cli/fastfetch) for the logo | You already have them |
+| `-InstallTools` | Downloads the programs that option needs - [oh-my-posh](https://ohmyposh.dev/) for the prompt, [fastfetch](https://github.com/fastfetch-cli/fastfetch) for the logo | You already have them |
 | `-InstallModules` | Downloads the four prompt add-ons: `posh-git`, `Terminal-Icons`, `PSFzf`, `z` | You already have them, or you chose option 3, which doesn't use them |
 
-Both use `winget`, which ships with Windows 10 and 11. If it's missing the installer says so and carries on — see [getting started](docs/getting-started.md#tools-the-installer-can-fetch-for-you).
+Both use `winget`, which ships with Windows 10 and 11. If it's missing, the installer says so and carries on - see [getting started](docs/getting-started.md#tools-the-installer-can-fetch-for-you).
 
 Add **`-WhatIf`** to any of the three commands to print every change it *would* make without touching a single file:
 
@@ -161,13 +161,13 @@ If you'd rather type words than numbers, `1` / `All` / `Both`, `2` / `Prompt`, a
 
 </details>
 
-### Step 4 — Point Windows Terminal at the font
+### Step 4 - Point Windows Terminal at the font
 
 Settings (`Ctrl+,`) → **Defaults** (or your PowerShell profile) → **Appearance** → Font face → `MesloLGL Nerd Font Mono`.
 
 Optional: the [terminal snippet](terminal/README.md) also copies the screenshot colours and transparency.
 
-### Step 5 — Open a new tab
+### Step 5 - Open a new tab
 
 Close the old one. A **new** PowerShell 7 tab loads the new startup file.
 
@@ -188,7 +188,7 @@ Rather look before changing anything? Do steps 1 and 2 above, then run this inst
 .\test-shell.ps1
 ```
 
-That opens a throwaway window using this folder. Your everyday PowerShell profile is **not** replaced. Specs shown are dummy numbers, the same ones in the screenshots — add `-Live` for your real hardware.
+That opens a throwaway window using this folder. Your everyday PowerShell profile is **not** replaced. Specs shown are dummy numbers, the same ones in the screenshots - add `-Live` for your real hardware.
 
 Walk every colour set or every logo, still without installing:
 
@@ -206,9 +206,9 @@ Details: [test profile](powershell/test/README.md) · [preview scripts](test/REA
 
 | You installed… | What to expect |
 | --- | --- |
-| **1 — both** | Logo + specs, then the fancy prompt. `reroll` works. |
-| **2 — prompt** | Fancy prompt only. No logo, no `reroll`. |
-| **3 — fetch** | Logo + specs. Your old prompt stays. `reroll` works. |
+| **1 - both** | Logo + specs, then the fancy prompt. `reroll` works. |
+| **2 - prompt** | Fancy prompt only. No logo, no `reroll`. |
+| **3 - fetch** | Logo + specs. Your old prompt stays. `reroll` works. |
 
 The fetch does not run inside VS Code, Cursor, or JetBrains terminals, so those stay quiet.
 
@@ -251,7 +251,7 @@ nc4-gacha-fetch/
 └─ docs/
 ```
 
-Some ASCII art is fan-made and the collection is curated by hand, so art pull requests are closed — see [CONTRIBUTING](CONTRIBUTING.md). Bug reports and doc fixes are very welcome.
+Some ASCII art is fan-made, and the collection is curated by hand, so art pull requests are closed - see [CONTRIBUTING](CONTRIBUTING.md). Bug reports and doc fixes are very welcome.
 
 ---
 
