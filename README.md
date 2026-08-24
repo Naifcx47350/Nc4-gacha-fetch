@@ -17,14 +17,14 @@ A Windows Terminal look that rolls a new ASCII logo every time you open a shell.
 
 ## What it is
 
-Two pieces. You can install **both**, or only the one you want.
+Two pieces. You can install **both**or just the one you want.
 
 | Piece | In plain language |
 | --- | --- |
 | **Gacha fetch** | A [fastfetch](https://github.com/fastfetch-cli/fastfetch) splash: picture on the left, PC specs on the right. Each new window rolls a rarity, then paints the picture and the colours from **that same rank**. **with a small chance for a shiny variant** that swaps the colours. |
 | **Prompt** | The line you type on. An [oh-my-posh](https://ohmyposh.dev/) theme with your name, how long the last command took, RAM, time, git, and a few extras (icons, fuzzy find, aliases). |
 
-You do not need to read the scripts. Follow the five steps, pick a number when asked, open a new tab.
+You do not need to read the scripts. Follow the five steps, pick a number when asked, and open a new tab.
 
 ---
 
@@ -53,7 +53,7 @@ You do not need to read the scripts. Follow the five steps, pick a number when a
 <p align="center">
   <img src="docs/images/terminal/image1.png" alt="The coloured PowerShell prompt" width="900">
 </p>
-<p align="center"><em>The prompt - what you type on after the fetch.</em></p>
+<p align="center"><em>The prompt - what you type after the fetch.</em></p>
 
 <details>
 <summary>More prompt shots</summary>
@@ -69,12 +69,12 @@ You do not need to read the scripts. Follow the five steps, pick a number when a
 
 ## Install
 
-Five steps, in order. Everything is typed into a **PowerShell 7** tab.
+Five steps, in order. Everything is typed into the **PowerShell 7** tab.
 
 **You will need** Windows 10 or 11, Windows Terminal, PowerShell 7, and a Nerd Font. If any of that is new to you, [getting started](docs/getting-started.md) explains each one in everyday language - then come back here.
 
 > [!IMPORTANT]
-> **PowerShell 7** and **Windows PowerShell** are two different apps. You want the one simply called *PowerShell*. Check with `$PSVersionTable.PSVersion` - the first number should be 7.
+> **PowerShell 7** and **Windows PowerShell** are two different apps. You want the one called *PowerShell*. Check with `$PSVersionTable.PSVersion` - the first number should be 7.
 
 > [!NOTE]
 > **Nothing is replaced without a backup.** Only PowerShell 7's own startup file is touched - Windows PowerShell 5.1, conda, your modules, and an oh-my-posh theme you already have are all left alone, and your gacha pity survives reinstalls. Full list: [what the installer touches](docs/getting-started.md#what-the-installer-will-and-will-not-touch).
@@ -98,7 +98,7 @@ No Git? Click the green **Code** button at the top of this repo → **Download Z
 
 ### Step 3 - Choose what you want, and run it
 
-Remember the two pieces: the **fetch** is the picture drawn once when a tab opens, the **prompt** is the coloured line you type on all session. Neither needs the other.
+Remember the two pieces: the **fetch** is the picture drawn once when a tab opens; the **prompt** is the coloured line you type in every session. Neither needs the other.
 
 Pick one of these three and run it. Nothing else in this step.
 
@@ -121,7 +121,7 @@ Best if you don't already have a terminal setup you're attached to. → [details
 ./install.ps1 2 -InstallModules -InstallTools
 ```
 
-The coloured line with git branch, timing, RAM and the rest. **No logo rolls** - whatever appears when you open a tab today keeps appearing, including nothing at all.
+The coloured line with git branch, timing, RAM, and the rest. **No logo rolls** - whatever appears when you open a tab today keeps appearing, including nothing at all.
 
 Best if you like your current startup screen, or don't want a picture every time. → [details](powershell/prompt/README.md)
 
@@ -149,7 +149,7 @@ Both are optional. They only save you from installing things by hand first.
 | `-InstallTools` | Downloads the programs that option needs - [oh-my-posh](https://ohmyposh.dev/) for the prompt, [fastfetch](https://github.com/fastfetch-cli/fastfetch) for the logo | You already have them |
 | `-InstallModules` | Downloads the four prompt add-ons: `posh-git`, `Terminal-Icons`, `PSFzf`, `z` | You already have them, or you chose option 3, which doesn't use them |
 
-Both use `winget`, which ships with Windows 10 and 11. If it's missing the installer says so and carries on - see [getting started](docs/getting-started.md#tools-the-installer-can-fetch-for-you).
+Both use `winget`, which ships with Windows 10 and 11. If it's missing, the installer says so and carries on - see [getting started](docs/getting-started.md#tools-the-installer-can-fetch-for-you).
 
 Add **`-WhatIf`** to any of the three commands to print every change it *would* make without touching a single file:
 
@@ -248,7 +248,7 @@ nc4-gacha-fetch/
 └─ docs/
 ```
 
-Some ASCII art is fan-made and the collection is curated by hand, so art pull requests are closed - see [CONTRIBUTING](CONTRIBUTING.md). Bug reports and doc fixes are very welcome.
+Some ASCII art is fan-made, and the collection is curated by hand, so art pull requests are closed - see [CONTRIBUTING](CONTRIBUTING.md). Bug reports and doc fixes are very welcome.
 
 ---
 
