@@ -17,7 +17,7 @@ A Windows Terminal look that rolls a new ASCII logo every time you open a shell.
 
 ## What it is
 
-Two pieces. You can install **both**or just the one you want.
+Two pieces. You can install **both** or just the one you want.
 
 | Piece | In plain language |
 | --- | --- |
